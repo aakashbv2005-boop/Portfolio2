@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <p class="hero-eyebrow"><span class="pulse"></span> BUILT THINGS</p>
+    <h1 class="page-title reveal">Projects</h1>
+    <p class="page-lede reveal">Academic and independent work spanning applied deep learning and embedded systems.</p>
+  </section>
+
+  <section class="section container" style="padding-top:0">
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
+      <a href="project-1.html" class="project-card reveal">
+        <div class="project-card-head">
+          <span class="project-index">P-01</span>
+          <span class="badge live">CURRENT</span>
+        </div>
+        <h3>Diabetic Retinopathy Classifier</h3>
+        <p>A deep learning model that grades diabetic retinopathy severity from retinal
+           fundus images, aimed at supporting earlier detection. Built model training,
+           evaluation and performance-analysis pipelines.</p>
+        <ul class="tag-list">
+          <li>TensorFlow</li><li>EfficientNet</li><li>Image Preprocessing</li>
+        </ul>
+      </a>
+
+      <a href="project-2.html" class="project-card reveal">
+        <div class="project-card-head">
+          <span class="project-index">P-02</span>
+          <span class="badge">DEC 2023 – FEB 2024</span>
+        </div>
+        <h3>IoT Assistant for Elderly Care</h3>
+        <p>An IoT-based system integrating sensors, a microcontroller and actuators to
+           automate and monitor daily activities, improving safety, convenience and
+           real-time visibility into essential needs.</p>
+        <ul class="tag-list">
+          <li>Sensors</li><li>Microcontrollers</li><li>Circuit Design</li><li>Systems Integration</li>
+        </ul>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
