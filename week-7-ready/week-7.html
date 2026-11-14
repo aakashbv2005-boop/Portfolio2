@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Week 7 additions (tables, code, flow lines, notes). Everything else uses css/style.css */
+.w7-flow{font-family:var(--font-mono);font-size:.85rem;padding:14px 16px;margin:12px 0;border:1px dashed var(--line);overflow-x:auto;white-space:nowrap;color:var(--ink)}
+.w7-wrap{overflow-x:auto;margin:12px 0}
+.w7-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.w7-table th,.w7-table td{text-align:left;padding:10px 12px;border-bottom:1px dashed var(--line);color:var(--ink-dim)}
+.w7-table th{font-family:var(--font-mono);font-weight:500;font-size:.75rem;color:var(--ink)}
+.content-block code{font-family:var(--font-mono);font-size:.85em;color:var(--cyan)}
+.content-block ol{display:flex;flex-direction:column;gap:9px;margin-top:8px;padding-left:22px}
+.content-block ol li{padding-left:4px}
+.content-block ol li::before{content:none}
+.content-block details{margin:12px 0;border:1px dashed var(--line)}
+.content-block summary{cursor:pointer;padding:12px 16px;font-family:var(--font-mono);font-size:.8rem;color:var(--ink)}
+.content-block pre{margin:0;padding:16px;overflow-x:auto;border-top:1px dashed var(--line);font-family:var(--font-mono);font-size:.8rem;line-height:1.55;color:var(--ink-dim);background:var(--bg-2)}
+.w7-note{padding:14px 16px;margin:12px 0;border-left:2px solid var(--amber);background:var(--panel);color:var(--ink-dim);font-size:.92rem}
+.w7-note strong{color:var(--ink)}
+.w7-todo{padding:14px 16px;margin:12px 0;border:1px dashed var(--line-hi);color:var(--ink-dim);font-size:.9rem}
+.content-block .card-grid{margin:12px 0}
+.content-card+.content-card{margin-top:28px}
+.w7-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.w7-gallery figure,.w7-video{margin:0}
+.w7-gallery img,.w7-gallery video,.w7-video video{display:block;width:100%;height:auto;border:1px dashed var(--line)}
+.w7-gallery img,.w7-gallery video{aspect-ratio:4/3;object-fit:cover}
+.w7-video video{max-width:640px;aspect-ratio:auto}
+.w7-gallery figcaption,.w7-video figcaption{margin-top:6px;font-family:var(--font-mono);font-size:.72rem;color:var(--ink-dim)}
+</style>
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <a href="protosem.html" class="back-link reveal">&larr; Back to Protosem Tracker</a>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7 · COMPLETED</p>
+    <h1 class="page-title reveal">Week 7</h1>
+    <p class="page-lede reveal">IoT and connectivity with the ESP32: from a local web server to a Firebase-connected smart-lighting system.</p>
+  </section>
+
+  <section class="section container" style="padding-top:0">
+    <div class="content-card reveal">
+      <div class="content-block">
+        <h2>What I worked on</h2>
+        <p>Five tasks that take an ESP32 from a local web page to cloud messaging, voice automation and a Firebase dashboard that monitors sensors and switches a mains bulb through a relay.</p>
+        <div class="chip-row" style="margin-top:16px"><a class="chip" href="#task-1">Web server</a><a class="chip" href="#task-2">MQTT</a><a class="chip" href="#task-3">IFTTT</a><a class="chip" href="#task-4">Dashboard</a><a class="chip" href="#task-5">ESP32 + Firebase</a></div>
+      </div>
+      <div class="content-block">
+        <h2>Tools used</h2>
+        <div class="chip-row"><span class="chip">ESP32</span><span class="chip">Arduino IDE</span><span class="chip">HTTP</span><span class="chip">MQTT</span><span class="chip">Adafruit IO</span><span class="chip">IFTTT</span><span class="chip">Firebase</span><span class="chip">DHT11</span><span class="chip">LDR</span><span class="chip">Relay</span></div>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="task-1">
+      <div class="content-block">
+        <h2>ESP32 web server</h2><p><strong>Objective:</strong> switch the ESP32's onboard LED on and off from a browser over a local Wi-Fi network.</p>
+      </div>
+      <div class="content-block">
+        <h2>Context</h2><p>This is the starting point of the week. Before using the cloud, the ESP32 itself is made to act as a small web server that answers requests from a browser.</p>
+      </div>
+      <div class="content-block">
+        <h2>Core concepts</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Web server</h3><p>The ESP32 joins Wi-Fi, gets a local IP address and listens for HTTP requests on port 80.</p></div><div class="skill-card"><div class="icon">02</div><h3>HTTP routes</h3><p>Each URL (/, /on, /off) is tied to a function that runs when the browser requests it.</p></div><div class="skill-card"><div class="icon">03</div><h3>Built-in LED</h3><p>The board's onboard LED needs no extra wiring, so the task isolates the networking part.</p></div></div>
+      </div>
+      <div class="content-block">
+        <h2>System architecture</h2><div class="w7-flow">Browser → HTTP request → ESP32 web server → GPIO → LED</div>
+      </div>
+      <div class="content-block">
+        <h2>Hardware and software</h2><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32 board</td><td>Wi-Fi microcontroller and web server</td></tr><tr><td>USB cable</td><td>Power and programming</td></tr><tr><td>Arduino IDE + ESP32 board package</td><td>Writing and uploading code</td></tr><tr><td>Browser on the same network</td><td>Sends the requests</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>Built-in LED</td><td>LED_BUILTIN (GPIO 2 on most DevKit boards)</td><td>Digital output</td></tr></table></div>
+      <p>No external wiring is needed.</p>
+      </div>
+      <div class="content-block">
+        <h2>Setup</h2><ol><li>Install the Arduino IDE.</li><li>In File → Preferences, add the Espressif ESP32 board package URL to Additional Boards Manager URLs.</li><li>In Boards Manager, install <em>esp32 by Espressif Systems</em>.</li><li>Select your ESP32 board and its COM port under Tools.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Implementation</h2><details open><summary>Full sketch</summary><pre>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+WebServer server(80);
+
+const char* page =
+  "&lt;h1&gt;ESP32 LED Control&lt;/h1&gt;"
+  "&lt;a href='/on'&gt;LED ON&lt;/a&gt; &lt;a href='/off'&gt;LED OFF&lt;/a&gt;";
+
+void handleRoot() { server.send(200, "text/html", page); }
+void handleOn()   { digitalWrite(LED_BUILTIN, HIGH); server.send(200, "text/html", page); }
+void handleOff()  { digitalWrite(LED_BUILTIN, LOW);  server.send(200, "text/html", page); }
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.println();
+  Serial.print("ESP32 IP: ");
+  Serial.println(WiFi.localIP());
+
+  server.on("/", handleRoot);
+  server.on("/on", handleOn);
+  server.on("/off", handleOff);
+  server.begin();
+}
+
+void loop() { server.handleClient(); }</pre></details>
+      </div>
+      <div class="content-block">
+        <h2>How the code works</h2><ol><li><code>WiFi.begin()</code> connects to the network and <code>WiFi.localIP()</code> prints the address to open.</li><li><code>server.on()</code> links each URL to a handler function.</li><li>Each handler sets the LED pin with <code>digitalWrite()</code> and returns the page.</li><li><code>server.handleClient()</code> in <code>loop()</code> checks for new browser requests.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Command flow</h2><div class="w7-flow">Click LED ON → GET /on → handleOn() → pin HIGH → LED on</div>
+      </div>
+      <div class="content-block">
+        <h2>Testing</h2><ol><li>Upload the sketch and open the Serial Monitor at 115200 baud.</li><li>Note the IP address once Wi-Fi connects.</li><li>Open that IP in a browser on the same network.</li><li>Press LED ON and LED OFF and watch the board.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Evidence</h2><div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      </div>
+      <div class="content-block">
+        <h2>Video proof</h2><div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo1.mp4"&gt;&lt;/video&gt;</code></div>
+      </div>
+      <div class="content-block">
+        <h2>Result</h2><div class="w7-todo">Write your own result and reflection: what the ESP32 as a web server taught you about browser, network and hardware working together.</div>
+      </div>
+      <div class="content-block">
+        <h2>Repository</h2><div class="w7-todo">Add your GitHub link for this task.</div>
+      </div>
+      <div class="content-block">
+        <h2>Things to check if it doesn't work</h2><ul><li>The browser and ESP32 must be on the same network, and the network must be 2.4 GHz.</li><li>The onboard LED pin differs between board variants, which is why <code>LED_BUILTIN</code> is used.</li></ul>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="task-2">
+      <div class="content-block">
+        <h2>ESP32 with Adafruit IO and MQTT</h2><p><strong>Objective:</strong> connect the ESP32 to Adafruit IO and use MQTT to switch a 230 V bulb through a relay, from a cloud dashboard instead of a local page.</p>
+      </div>
+      <div class="content-block">
+        <h2>Context</h2><p>Task 1 only worked on the same Wi-Fi network as the ESP32. This task moves control to the cloud. Adafruit IO is the platform, MQTT is the protocol, and the ESP32 acts on the messages it receives by switching a relay.</p>
+      </div>
+      <div class="content-block">
+        <h2>Core concepts</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Adafruit IO</h3><p>A cloud service that stores values in named feeds. Devices and dashboards read and write the same feed.</p></div><div class="skill-card"><div class="icon">02</div><h3>MQTT</h3><p>A lightweight messaging protocol for IoT. Devices send messages through a broker instead of connecting to each other.</p></div><div class="skill-card"><div class="icon">03</div><h3>Publish and subscribe</h3><p>A device publishes to a topic, and any device subscribed to that topic receives it. Here the ESP32 subscribes to the bulb feed.</p></div><div class="skill-card"><div class="icon">04</div><h3>Relay switching</h3><p>The ESP32 only drives the relay's low-voltage input. The relay's contacts switch the mains bulb.</p></div></div>
+      </div>
+      <div class="content-block">
+        <h2>System architecture</h2><div class="w7-flow">Adafruit IO dashboard → MQTT broker → ESP32 → relay → 230 V bulb</div>
+      </div>
+      <div class="content-block">
+        <h2>Hardware and software</h2><div class="w7-wrap"><table class="w7-table">
+        <tr><th>Item</th><th>Purpose</th></tr>
+        <tr><td>ESP32</td><td>Connects to Wi-Fi and Adafruit IO, runs the control code</td></tr>
+        <tr><td>Relay module</td><td>Isolates and switches the mains load</td></tr>
+        <tr><td>230 V bulb and holder</td><td>The load being controlled</td></tr>
+        <tr><td>Arduino IDE + Adafruit IO Arduino library</td><td>Programming and MQTT handling</td></tr>
+        <tr><td>Adafruit IO account and feed</td><td>Cloud side of the connection</td></tr>
+      </table></div>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Component</th><th>GPIO</th><th>Type</th></tr>
+        <tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td></tr>
+        <tr><td>230 V bulb</td><td>Relay output</td><td>Switched load</td></tr>
+      </table></div>
+      <p class="w7-note"><strong>Safety:</strong> the bulb connects only through the relay contacts. Never connect 230 V to an ESP32 pin, keep all mains wiring insulated and enclosed, and use a relay rated for the load.</p>
+      </div>
+      <div class="content-block">
+        <h2>Setup</h2><ol>
+        <li>Create an Adafruit IO account and a feed named <code>bulb</code>.</li>
+        <li>Copy your Adafruit IO username and key into the sketch. Keep the key out of any public repository.</li>
+        <li>Wire the relay's IN pin to the ESP32 GPIO, and power the relay module as its datasheet requires.</li>
+        <li>Connect the bulb through the relay's switched terminals.</li>
+        <li>Upload the sketch and check the Serial Monitor for the Adafruit IO connection.</li>
+      </ol>
+      </div>
+      <div class="content-block">
+        <h2>Implementation</h2><details open>
+        <summary>Full sketch</summary>
+<pre>#include &lt;WiFi.h&gt;
+#include "AdafruitIO_WiFi.h"
+
+// Wi-Fi
+#define WIFI_SSID     "YOUR_WIFI_NAME"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+// Adafruit IO
+#define IO_USERNAME "YOUR_ADAFRUIT_USERNAME"
+#define IO_KEY      "YOUR_ADAFRUIT_IO_KEY"
+
+// Relay (use the GPIO you actually wired)
+#define RELAY_PIN 26
+
+AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASSWORD);
+AdafruitIO_Feed *bulbFeed = io.feed("bulb");
+
+// Runs every time a new value arrives on the feed
+void handleBulb(AdafruitIO_Data *data) {
+  String value = data-&gt;toString();
+  Serial.print("Received command: ");
+  Serial.println(value);
+
+  if (value == "ON" || value == "1" || value == "on") {
+    digitalWrite(RELAY_PIN, HIGH);
+    Serial.println("Relay ON");
+  } else if (value == "OFF" || value == "0" || value == "off") {
+    digitalWrite(RELAY_PIN, LOW);
+    Serial.println("Relay OFF");
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);          // start with bulb off
+
+  Serial.println("Connecting to Adafruit IO...");
+  io.connect();
+  while (io.status() &lt; AIO_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println("\nConnected to Adafruit IO");
+
+  bulbFeed-&gt;onMessage(handleBulb);       // subscribe to the feed
+  bulbFeed-&gt;get();                       // fetch the latest value
+}
+
+void loop() {
+  io.run();                              // keep MQTT alive, process messages
+}</pre>
+      </details>
+      </div>
+      <div class="content-block">
+        <h2>How the code works</h2><ol>
+        <li><strong>Connect.</strong> <code>io.connect()</code> joins Wi-Fi and authenticates with your username and key.</li>
+        <li><strong>Subscribe.</strong> <code>onMessage(handleBulb)</code> registers the function to call when the <code>bulb</code> feed changes.</li>
+        <li><strong>Decide.</strong> <code>handleBulb</code> reads the text value and treats ON or 1 as on, OFF or 0 as off.</li>
+        <li><strong>Switch.</strong> The relay pin goes HIGH or LOW, which closes or opens the bulb circuit.</li>
+        <li><strong>Stay connected.</strong> <code>io.run()</code> in <code>loop()</code> must run constantly, or messages are missed.</li>
+      </ol>
+      </div>
+      <div class="content-block">
+        <h2>Command flow</h2><div class="w7-flow">Set ON on dashboard → feed updates → MQTT message → ESP32 handleBulb() → relay closes → bulb on</div>
+      <p>OFF follows the same path and opens the relay.</p>
+      </div>
+      <div class="content-block">
+        <h2>Evidence</h2><div class="w7-todo">Add your own screenshots here: the Adafruit IO feed, the ESP32 configuration, MQTT messages in the Serial Monitor, the relay clicking, and the bulb on and off.</div>
+      </div>
+      <div class="content-block">
+        <h2>Video proof</h2><div class="w7-todo">Add your demo video: toggling the Adafruit IO dashboard and the bulb responding. <code>&lt;video controls src="week7/video/demo2.mp4"&gt;&lt;/video&gt;</code></div>
+      </div>
+      <div class="content-block">
+        <h2>Things to check if it doesn't work</h2><ul>
+        <li>The Wi-Fi network must be 2.4 GHz, and the ESP32 needs a stable connection before Adafruit IO will connect.</li>
+        <li>The username, key and feed name in the sketch must match your Adafruit IO account exactly.</li>
+        <li>Change the feed value and watch the Serial Monitor to confirm the message arrives.</li>
+        <li>Confirm whether your relay module is active-HIGH or active-LOW. If the bulb is inverted, swap HIGH and LOW.</li>
+      </ul>
+      </div>
+      <div class="content-block">
+        <h2>Result</h2><div class="w7-todo">Write your own result and reflection here: what worked, what went wrong, and what you learned about cloud control compared with Task 1.</div>
+      </div>
+      <div class="content-block">
+        <h2>Repository</h2><div class="w7-todo">Add your GitHub link for this task.</div>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="task-3">
+      <div class="content-block">
+        <h2>Voice control with IFTTT</h2><p><strong>Objective:</strong> control the ESP32 with a spoken command, using IFTTT to turn the voice trigger into an HTTP request.</p>
+      </div>
+      <div class="content-block">
+        <h2>Context</h2><p>Tasks 1 and 2 used a browser and a cloud dashboard. This task adds a voice layer: a phrase triggers an IFTTT applet, and the applet's action is a web request to the ESP32.</p>
+      </div>
+      <div class="content-block">
+        <h2>Core concepts</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Voice trigger</h3><p>A phrase spoken to a voice assistant that IFTTT is connected to starts the automation.</p></div><div class="skill-card"><div class="icon">02</div><h3>IFTTT applet</h3><p>"If this, then that": the trigger on one side, an action on the other.</p></div><div class="skill-card"><div class="icon">03</div><h3>Web request</h3><p>The action sends an HTTP GET to a URL such as /on or /off.</p></div><div class="skill-card"><div class="icon">04</div><h3>Request handling</h3><p>The ESP32 serves those routes and sets the output.</p></div></div>
+      </div>
+      <div class="content-block">
+        <h2>System architecture</h2><div class="w7-flow">Voice command → IFTTT applet → HTTP request → ESP32 → relay → output</div>
+      </div>
+      <div class="content-block">
+        <h2>Hardware and software</h2><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32 + relay and bulb or LED</td><td>Output being controlled</td></tr><tr><td>Arduino IDE</td><td>Programming</td></tr><tr><td>IFTTT account</td><td>Automation layer</td></tr><tr><td>Voice assistant</td><td>Source of the command</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>Relay IN (or LED)</td><td>Your chosen GPIO</td><td>Digital output</td></tr></table></div>
+      </div>
+      <div class="content-block">
+        <h2>Setup</h2><ol><li>Upload the sketch below so the ESP32 serves <code>/on</code> and <code>/off</code>.</li><li>In IFTTT, create an applet whose trigger is your voice phrase for ON.</li><li>Set the action to a web request using GET to the ESP32's address followed by <code>/on</code>.</li><li>Create a second applet for OFF using <code>/off</code>.</li><li>Test each phrase and watch the Serial Monitor.</li></ol>
+      <p class="w7-note"><strong>Reachability:</strong> IFTTT sends the request from the internet, so a private address like 192.168.x.x won't work. The ESP32 must be reachable from outside your network (port forwarding or a tunnel), or the command must go through a cloud service. Say which route you used. Exposing a device this way has security risks, so do it only on a test setup.</p>
+      </div>
+      <div class="content-block">
+        <h2>Implementation</h2><details open><summary>Full sketch</summary><pre>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+#define RELAY_PIN 26          // use the GPIO you wired
+
+WebServer server(80);
+
+void handleOn() {
+  digitalWrite(RELAY_PIN, HIGH);
+  server.send(200, "text/plain", "ON");
+}
+void handleOff() {
+  digitalWrite(RELAY_PIN, LOW);
+  server.send(200, "text/plain", "OFF");
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  Serial.println(WiFi.localIP());
+
+  server.on("/on", handleOn);
+  server.on("/off", handleOff);
+  server.begin();
+}
+
+void loop() { server.handleClient(); }</pre></details>
+      </div>
+      <div class="content-block">
+        <h2>How the code works</h2><ol><li>The ESP32 joins Wi-Fi and starts a server, as in Task 1.</li><li><code>/on</code> and <code>/off</code> are the endpoints IFTTT calls.</li><li>Each handler sets the relay pin and replies with plain text so IFTTT sees a successful response.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Command flow</h2><div class="w7-flow">"Turn on" phrase → applet fires → GET /on → handleOn() → relay closes</div>
+      </div>
+      <div class="content-block">
+        <h2>Evidence</h2>
+        <div class="w7-gallery"><figure><img src="assets/week7/voice-bulb-1.jpg" alt="Missing file: assets/week7/voice-bulb-1.jpg. Two people at the bench with a laptop, ESP32 and relay wired to a bulb, which is lit in a dim room." loading="lazy"><figcaption>Voice command test in a dim room, bulb on</figcaption></figure><figure><img src="assets/week7/voice-bulb-2.jpg" alt="Missing file: assets/week7/voice-bulb-2.jpg. A phone held up to speak a command while the bulb on the bench is lit." loading="lazy"><figcaption>Voice command spoken to a phone, bulb on</figcaption></figure><figure><img src="assets/week7/voice-bulb-3.jpg" alt="Missing file: assets/week7/voice-bulb-3.jpg. Speaking to a phone beside the laptop, ESP32 and relay, with the bulb lit." loading="lazy"><figcaption>Second voice command test, bulb on</figcaption></figure><figure><img src="assets/week7/voice-bulb-4.jpg" alt="Missing file: assets/week7/voice-bulb-4.jpg. The same setup with the bulb switched off." loading="lazy"><figcaption>Voice command test, bulb off</figcaption></figure><figure><img src="assets/week7/voice-bulb-5.jpg" alt="Missing file: assets/week7/voice-bulb-5.jpg. The bulb glowing brightly while a command is spoken to the phone." loading="lazy"><figcaption>Voice command test, bulb switching on</figcaption></figure><figure><img src="assets/week7/voice-bulb-6.jpg" alt="Missing file: assets/week7/voice-bulb-6.jpg. The setup with the bulb off and the serial output open on the laptop." loading="lazy"><figcaption>Voice command test, bulb off</figcaption></figure></div>
+      </div>
+      <div class="content-block">
+        <h2>Video proof</h2>
+        <figure class="w7-video"><video controls preload="metadata" src="assets/week7/voice-bulb-demo.mp4"></video><figcaption>Task 3: voice command switching the bulb</figcaption></figure>
+      </div>
+      <div class="content-block">
+        <h2>Result</h2><div class="w7-todo">Write your own result and reflection: how the command travelled through several services, and what you did about reachability.</div>
+      </div>
+      <div class="content-block">
+        <h2>Repository</h2><div class="w7-todo">Add your GitHub link for this task.</div>
+      </div>
+      <div class="content-block">
+        <h2>Things to check if it doesn't work</h2><ul><li>The spoken phrase must match the applet trigger.</li><li>The URL in the web-request action must be reachable from the internet and use the right route.</li><li>Test ON and OFF as separate applets.</li></ul>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="task-4">
+      <div class="content-block">
+        <h2>Firebase IoT dashboard</h2><p><strong>Objective:</strong> build a login-protected web dashboard in HTML, CSS and JavaScript that shows temperature, humidity and light level and controls a bulb in MANUAL or AUTO mode. This task is software only. The hardware connects in Task 5.</p>
+      </div>
+      <div class="content-block">
+        <h2>Context</h2><p>After local, cloud and voice control, the system needs a proper interface. The dashboard reads and writes Firebase so the ESP32 and the browser share one source of truth.</p>
+      </div>
+      <div class="content-block">
+        <h2>Core concepts</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Firebase</h3><p>Google's backend platform, used here for data and login.</p></div><div class="skill-card"><div class="icon">02</div><h3>Realtime Database</h3><p>A JSON tree that pushes changes to every connected client instantly.</p></div><div class="skill-card"><div class="icon">03</div><h3>Authentication</h3><p>Only signed-in users can see or change the data.</p></div><div class="skill-card"><div class="icon">04</div><h3>Dashboard</h3><p>Cards for sensor values plus controls for the bulb and the mode.</p></div></div>
+      </div>
+      <div class="content-block">
+        <h2>System architecture</h2><div class="w7-flow">Sensor data → Firebase → dashboard &nbsp;|&nbsp; Dashboard control → Firebase → device</div>
+      </div>
+      <div class="content-block">
+        <h2>Hardware and software</h2><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>HTML, CSS, JavaScript</td><td>Dashboard interface</td></tr><tr><td>Firebase Authentication</td><td>Login</td></tr><tr><td>Firebase Realtime Database</td><td>Shared data</td></tr></table></div>
+      <p>No GPIO is used in this task.</p>
+      </div>
+      <div class="content-block">
+        <h2>Dashboard development</h2><ol><li><strong>Layout.</strong> Design a simple page for monitoring and control.</li><li><strong>Sensor monitoring.</strong> Add sections for temperature, humidity and the LDR light value.</li><li><strong>Database connection.</strong> Connect the page to Firebase Realtime Database to read and write values.</li><li><strong>Authentication.</strong> Add a login so only authorised users can open the dashboard.</li><li><strong>Bulb controls.</strong> Add ON and OFF controls, a MANUAL or AUTO switch and a bulb status display.</li><li><strong>Testing.</strong> Check sensor display, login, controls and data updates end to end.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Firebase configuration</h2><ol><li>Create a Firebase project for the backend services.</li><li>Enable Email/Password sign-in under Authentication and add a user.</li><li>Create a Realtime Database with the <code>/sensors</code> and <code>/control</code> paths.</li><li>Add your web app configuration to the JavaScript so the dashboard can connect.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Database structure</h2><details open><summary>Realtime Database JSON</summary><pre>{
+  "sensors": { "temperature": 0, "humidity": 0, "ldr": 0 },
+  "control": { "bulb": "OFF", "mode": "MANUAL" }
+}</pre></details>
+      <details><summary>Security rules (starting point)</summary><pre>{
+  "rules": { ".read": "auth != null", ".write": "auth != null" }
+}</pre></details>
+      </div>
+      <div class="content-block">
+        <h2>Implementation</h2><details open><summary>Firebase and script structure</summary><pre>Firebase
+├── Authentication
+└── Realtime Database
+    ├── sensors
+    │   ├── temperature
+    │   ├── humidity
+    │   └── ldr
+    └── control
+        ├── bulb
+        └── mode</pre></details><details open><summary>Dashboard script (outline)</summary><pre>import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const app = initializeApp(firebaseConfig);   // from your Firebase console
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// Log in, then start listening
+signInWithEmailAndPassword(auth, email, password).then(() =&gt; {
+  onValue(ref(db, "sensors"), (snap) =&gt; {
+    const d = snap.val();
+    tempEl.textContent  = d.temperature;
+    humEl.textContent   = d.humidity;
+    ldrEl.textContent   = d.ldr;
+  });
+  onValue(ref(db, "control"), (snap) =&gt; {
+    const c = snap.val();
+    statusEl.textContent = c.bulb + " (" + c.mode + ")";
+  });
+});
+
+// Controls write to the database
+bulbOnBtn.onclick  = () =&gt; set(ref(db, "control/bulb"), "ON");
+bulbOffBtn.onclick = () =&gt; set(ref(db, "control/bulb"), "OFF");
+modeSelect.onchange = (e) =&gt; set(ref(db, "control/mode"), e.target.value);</pre></details>
+      </div>
+      <div class="content-block">
+        <h2>Dashboard functions</h2><ul><li>Temperature: shows the value from the connected sensor.</li><li>Humidity: shows the humidity reading.</li><li>Light: shows the LDR value for ambient light.</li><li>Bulb status: shows whether the bulb is on or off.</li><li>MANUAL mode: the user switches the bulb from the dashboard.</li><li>AUTO mode: the connected system switches the bulb by its own logic.</li></ul>
+      </div>
+      <div class="content-block">
+        <h2>Evidence</h2><div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      </div>
+      <div class="content-block">
+        <h2>Video proof</h2><div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo4.mp4"&gt;&lt;/video&gt;</code></div>
+      </div>
+      <div class="content-block">
+        <h2>Challenges and fixes</h2><ul><li><strong>Firebase connection:</strong> the web configuration must match your Firebase project.</li><li><strong>Authentication:</strong> sign-in must be enabled and the rules must require it.</li><li><strong>Database paths:</strong> the script must read and write the same paths as the structure above.</li><li><strong>Real-time updates:</strong> change a value in the console and confirm the dashboard updates.</li></ul>
+      </div>
+      <div class="content-block">
+        <h2>Result</h2><div class="w7-todo">Write your own result and reflection: how login, database structure and controls fit together.</div>
+      </div>
+      <div class="content-block">
+        <h2>Repository</h2><div class="w7-todo">Add your GitHub link for this task.</div>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="task-5">
+      <div class="content-block">
+        <h2>ESP32 with the Firebase dashboard</h2><p><strong>Objective:</strong> connect the ESP32 to the Firebase dashboard so it uploads sensor readings and follows the dashboard's bulb and mode commands.</p>
+      </div>
+      <div class="content-block">
+        <h2>Context</h2><p>Task 4 built the interface and this task adds the physical device. The ESP32 writes readings to <code>/sensors</code> and reads <code>/control</code>, giving a connected smart-lighting system.</p>
+      </div>
+      <div class="content-block">
+        <h2>Core concepts</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Sensor acquisition</h3><p>The DHT11 gives temperature and humidity, and the LDR gives an analog light reading.</p></div><div class="skill-card"><div class="icon">02</div><h3>Cloud upload</h3><p>The ESP32 writes readings to Firebase over Wi-Fi.</p></div><div class="skill-card"><div class="icon">03</div><h3>Remote control</h3><p>The ESP32 reads the dashboard's mode and bulb command and drives the relay.</p></div><div class="skill-card"><div class="icon">04</div><h3>Automatic lighting</h3><p>In AUTO mode the LDR reading is compared with a threshold to switch the bulb.</p></div></div>
+      </div>
+      <div class="content-block">
+        <h2>System architecture</h2><div class="w7-flow">DHT11 + LDR → ESP32 → Firebase → dashboard &nbsp;|&nbsp; dashboard → Firebase → ESP32 → relay → bulb</div>
+      </div>
+      <div class="content-block">
+        <h2>Hardware and software</h2><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32</td><td>Reads sensors, talks to Firebase, drives the relay</td></tr><tr><td>DHT11</td><td>Temperature and humidity</td></tr><tr><td>LDR module</td><td>Light level</td></tr><tr><td>Relay module + bulb</td><td>Switched lighting</td></tr><tr><td>Arduino IDE + a Firebase library for ESP32</td><td>Programming and database access</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>DHT11 data</td><td>GPIO 4</td><td>Digital input</td></tr><tr><td>LDR AO</td><td>GPIO 34</td><td>Analog input</td></tr><tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td></tr></table></div>
+      <p class="w7-note"><strong>Check against your circuit:</strong> these pins are example values. Use the ones you actually wired. Never connect 230 V to the ESP32. The bulb connects only through the relay contacts.</p>
+      </div>
+      <div class="content-block">
+        <h2>Setup</h2><ol><li>Wire the DHT11, LDR and relay to the ESP32.</li><li>Install a Firebase client library for ESP32 in the Arduino IDE.</li><li>Add your Wi-Fi details, Firebase project details and a sign-in for the ESP32, because the rules require authentication.</li><li>Upload the sketch and confirm values appear under <code>/sensors</code>.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Implementation</h2><details open><summary>Control logic (outline)</summary><pre>// Outline of the control loop. Add your tested sketch,
+// with your Firebase library calls and GPIO numbers.
+
+const int LDR_THRESHOLD = 0;   // set from your own calibration
+
+void loop() {
+  float temp = readTemperature();   // DHT11
+  float hum  = readHumidity();      // DHT11
+  int   ldr  = analogRead(34);      // LDR
+
+  firebaseSet("/sensors/temperature", temp);
+  firebaseSet("/sensors/humidity",    hum);
+  firebaseSet("/sensors/ldr",         ldr);
+
+  String mode = firebaseGetString("/control/mode");
+
+  if (mode == "AUTO") {
+    // check whether your LDR reads higher in light or in dark
+    bulb(ldr &gt; LDR_THRESHOLD);
+  } else {                          // MANUAL
+    bulb(firebaseGetString("/control/bulb") == "ON");
+  }
+  delay(2000);
+}</pre></details>
+      </div>
+      <div class="content-block">
+        <h2>MANUAL and AUTO modes</h2><div class="w7-wrap"><table class="w7-table"><tr><th>Mode</th><th>Behaviour</th></tr><tr><td>MANUAL</td><td>The dashboard's ON or OFF decides the relay.</td></tr><tr><td>AUTO</td><td>The LDR reading and the threshold decide the relay.</td></tr></table></div>
+      </div>
+      <div class="content-block">
+        <h2>How it works</h2><ol><li>The ESP32 reads the sensors and uploads the values.</li><li>It reads <code>/control/mode</code> first, so it knows whether to follow the dashboard or the LDR.</li><li>It sets the relay pin to match, and the dashboard shows the new state.</li><li>Calibrate the LDR threshold under your own lighting conditions.</li></ol>
+      </div>
+      <div class="content-block">
+        <h2>Evidence</h2><div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      </div>
+      <div class="content-block">
+        <h2>Video proof</h2><div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo5.mp4"&gt;&lt;/video&gt;</code></div>
+      </div>
+      <div class="content-block">
+        <h2>Result</h2><div class="w7-todo">Write your own result and reflection: how hardware, cloud and interface came together, and how you handled MANUAL against AUTO.</div>
+      </div>
+      <div class="content-block">
+        <h2>Repository</h2><div class="w7-todo">Add your GitHub link for this task.</div>
+      </div>
+      <div class="content-block">
+        <h2>Things to check if it doesn't work</h2><ul><li>Database paths must match between the sketch and the dashboard.</li><li>The ESP32 must sign in, or the security rules will reject its writes.</li><li>Confirm whether your relay is active-HIGH or active-LOW.</li></ul>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="oled-joystick" style="margin-top:28px">
+      <div class="content-block">
+        <h2>Additional lab work: OLED display and joystick</h2>
+        <p>Photos and clips from a separate bench session with an ESP32 driving an OLED display and a joystick module, including a score and lives screen and a TEAM 30 message.</p>
+        <div class="w7-todo">Add a short description of what this build was for, and move it to the right week if it doesn't belong in Week 7.</div>
+      </div>
+      <div class="content-block">
+        <h2>Photos</h2>
+        <div class="w7-gallery"><figure><img src="assets/week7/oled-1.jpg" alt="Missing file: assets/week7/oled-1.jpg. Arduino IDE open with upload output, and the ESP32 wired to an OLED display and a joystick module." loading="lazy"><figcaption>Uploading the sketch to the ESP32</figcaption></figure><figure><img src="assets/week7/oled-2.jpg" alt="Missing file: assets/week7/oled-2.jpg. The ESP32, OLED display and joystick module wired together, with the display showing a score and lives counter." loading="lazy"><figcaption>OLED showing Score and Lives</figcaption></figure><figure><img src="assets/week7/oled-3.jpg" alt="Missing file: assets/week7/oled-3.jpg. A second view of the OLED display showing the score and lives counter." loading="lazy"><figcaption>OLED game screen close-up</figcaption></figure><figure><img src="assets/week7/oled-4.jpg" alt="Missing file: assets/week7/oled-4.jpg. Two teammates at the bench discussing the OLED display and wiring." loading="lazy"><figcaption>Discussing the OLED wiring</figcaption></figure><figure><img src="assets/week7/oled-5.jpg" alt="Missing file: assets/week7/oled-5.jpg. One teammate holding the ESP32 and jumper wires while the other holds the OLED, with the laptop open." loading="lazy"><figcaption>Wiring the ESP32 to the display</figcaption></figure><figure><img src="assets/week7/oled-6.jpg" alt="Missing file: assets/week7/oled-6.jpg. The OLED display and joystick module held up at the workbench." loading="lazy"><figcaption>OLED display and joystick on the bench</figcaption></figure><figure><img src="assets/week7/oled-7.jpg" alt="Missing file: assets/week7/oled-7.jpg. The OLED display showing the text TEAM 30, connected to the ESP32." loading="lazy"><figcaption>OLED displaying "TEAM 30"</figcaption></figure></div>
+      </div>
+      <div class="content-block">
+        <h2>Video clips</h2>
+        <div class="w7-gallery"><figure class="w7-video"><video controls preload="metadata" src="assets/week7/oled-demo-1.mp4"></video><figcaption>Clip 1</figcaption></figure><figure class="w7-video"><video controls preload="metadata" src="assets/week7/oled-demo-2.mp4"></video><figcaption>Clip 2</figcaption></figure><figure class="w7-video"><video controls preload="metadata" src="assets/week7/oled-demo-3.mp4"></video><figcaption>Clip 3</figcaption></figure></div>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="takeaways">
+      <div class="content-block">
+        <h2>Key takeaways</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Local vs cloud control</h3><p>A local web server only works on the same network. MQTT and Firebase let the device be controlled from anywhere.</p></div><div class="skill-card"><div class="icon">02</div><h3>Publish and subscribe</h3><p>MQTT devices talk through a broker and topics rather than directly to each other.</p></div><div class="skill-card"><div class="icon">03</div><h3>Isolate the mains side</h3><p>The ESP32 only drives the relay's low-voltage input. The relay does the 230 V switching.</p></div><div class="skill-card"><div class="icon">04</div><h3>Manual and automatic modes</h3><p>Reading the mode first stops dashboard commands and the sensor from fighting over the relay.</p></div></div>
+      <div class="w7-todo">Rewrite these in your own words, and add what you personally found difficult or learned from each task.</div>
+      </div>
+    </div>
+
+    <div class="content-card reveal" id="deliverables" style="margin-top:28px">
+      <div class="content-block">
+        <h2>Deliverables</h2><div class="card-grid"><div class="skill-card"><div class="icon">01</div><h3>Task 1 — Web server</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div><div class="skill-card"><div class="icon">02</div><h3>Task 2 — MQTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div><div class="skill-card"><div class="icon">03</div><h3>Task 3 — IFTTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div><div class="skill-card"><div class="icon">04</div><h3>Task 4 — Dashboard</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div><div class="skill-card"><div class="icon">05</div><h3>Task 5 — ESP32 + Firebase</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
