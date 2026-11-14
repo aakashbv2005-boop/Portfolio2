@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 · Task 5 — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="week7.css">
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="../index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="../index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="../skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="../experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="../projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="../protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="../education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="../contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <a href="index.html" class="back-link reveal">&larr; Back to Week 7</a>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7 · TASK 5 OF 5</p>
+    <h1 class="page-title reveal">ESP32 with the Firebase dashboard</h1>
+  </section>
+  <section class="section container" style="padding-top:0">
+    <article class="w7-task reveal" id="task-5">
+
+      <p><strong>Objective:</strong> connect the ESP32 to the Firebase dashboard so it uploads sensor readings and follows the dashboard's bulb and mode commands.</p>
+      <h3>Context</h3><p>Task 4 built the interface and this task adds the physical device. The ESP32 writes readings to <code>/sensors</code> and reads <code>/control</code>, giving a connected smart-lighting system.</p>
+      <h3>Core concepts</h3><div class="w7-grid"><div><h3>Sensor acquisition</h3><p>The DHT11 gives temperature and humidity, and the LDR gives an analog light reading.</p></div><div><h3>Cloud upload</h3><p>The ESP32 writes readings to Firebase over Wi-Fi.</p></div><div><h3>Remote control</h3><p>The ESP32 reads the dashboard's mode and bulb command and drives the relay.</p></div><div><h3>Automatic lighting</h3><p>In AUTO mode the LDR reading is compared with a threshold to switch the bulb.</p></div></div>
+      <h3>System architecture</h3><div class="w7-flow">DHT11 + LDR → ESP32 → Firebase → dashboard &nbsp;|&nbsp; dashboard → Firebase → ESP32 → relay → bulb</div>
+      <h3>Hardware and software</h3><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32</td><td>Reads sensors, talks to Firebase, drives the relay</td></tr><tr><td>DHT11</td><td>Temperature and humidity</td></tr><tr><td>LDR module</td><td>Light level</td></tr><tr><td>Relay module + bulb</td><td>Switched lighting</td></tr><tr><td>Arduino IDE + a Firebase library for ESP32</td><td>Programming and database access</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>DHT11 data</td><td>GPIO 4</td><td>Digital input</td></tr><tr><td>LDR AO</td><td>GPIO 34</td><td>Analog input</td></tr><tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td></tr></table></div>
+      <p class="w7-note"><strong>Check against your circuit:</strong> these pins are example values. Use the ones you actually wired. Never connect 230 V to the ESP32. The bulb connects only through the relay contacts.</p>
+      <h3>Setup</h3><ol><li>Wire the DHT11, LDR and relay to the ESP32.</li><li>Install a Firebase client library for ESP32 in the Arduino IDE.</li><li>Add your Wi-Fi details, Firebase project details and a sign-in for the ESP32, because the rules require authentication.</li><li>Upload the sketch and confirm values appear under <code>/sensors</code>.</li></ol>
+      <h3>Implementation</h3><details open><summary>Control logic (outline)</summary><pre>// Outline of the control loop. Add your tested sketch,
+// with your Firebase library calls and GPIO numbers.
+
+const int LDR_THRESHOLD = 0;   // set from your own calibration
+
+void loop() {
+  float temp = readTemperature();   // DHT11
+  float hum  = readHumidity();      // DHT11
+  int   ldr  = analogRead(34);      // LDR
+
+  firebaseSet("/sensors/temperature", temp);
+  firebaseSet("/sensors/humidity",    hum);
+  firebaseSet("/sensors/ldr",         ldr);
+
+  String mode = firebaseGetString("/control/mode");
+
+  if (mode == "AUTO") {
+    // check whether your LDR reads higher in light or in dark
+    bulb(ldr &gt; LDR_THRESHOLD);
+  } else {                          // MANUAL
+    bulb(firebaseGetString("/control/bulb") == "ON");
+  }
+  delay(2000);
+}</pre></details>
+      <h3>MANUAL and AUTO modes</h3><div class="w7-wrap"><table class="w7-table"><tr><th>Mode</th><th>Behaviour</th></tr><tr><td>MANUAL</td><td>The dashboard's ON or OFF decides the relay.</td></tr><tr><td>AUTO</td><td>The LDR reading and the threshold decide the relay.</td></tr></table></div>
+      <h3>How it works</h3><ol><li>The ESP32 reads the sensors and uploads the values.</li><li>It reads <code>/control/mode</code> first, so it knows whether to follow the dashboard or the LDR.</li><li>It sets the relay pin to match, and the dashboard shows the new state.</li><li>Calibrate the LDR threshold under your own lighting conditions.</li></ol>
+      
+      <h3>Evidence</h3>
+      <div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      <h3>Video proof</h3>
+      <div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo5.mp4"&gt;&lt;/video&gt;</code></div>
+      <h3>Result</h3>
+      <div class="w7-todo">Write your own result and reflection: how hardware, cloud and interface came together, and how you handled MANUAL against AUTO.</div>
+      <h3>Repository</h3>
+      <div class="w7-todo">Add your GitHub link for this task.</div>
+
+      <h3>Things to check if it doesn't work</h3><ul><li>Database paths must match between the sketch and the dashboard.</li><li>The ESP32 must sign in, or the security rules will reject its writes.</li><li>Confirm whether your relay is active-HIGH or active-LOW.</li></ul>
+    </article>
+    <nav class="w7-pager" aria-label="Task navigation"><a href="task-4.html">&larr; Task 4: Firebase IoT dashboard</a><span></span></nav>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="../contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="../js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 · Task 3 — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="week7.css">
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="../index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="../index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="../skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="../experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="../projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="../protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="../education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="../contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <a href="index.html" class="back-link reveal">&larr; Back to Week 7</a>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7 · TASK 3 OF 5</p>
+    <h1 class="page-title reveal">Voice control with IFTTT</h1>
+  </section>
+  <section class="section container" style="padding-top:0">
+    <article class="w7-task reveal" id="task-3">
+
+      <p><strong>Objective:</strong> control the ESP32 with a spoken command, using IFTTT to turn the voice trigger into an HTTP request.</p>
+      <h3>Context</h3><p>Tasks 1 and 2 used a browser and a cloud dashboard. This task adds a voice layer: a phrase triggers an IFTTT applet, and the applet's action is a web request to the ESP32.</p>
+      <h3>Core concepts</h3><div class="w7-grid"><div><h3>Voice trigger</h3><p>A phrase spoken to a voice assistant that IFTTT is connected to starts the automation.</p></div><div><h3>IFTTT applet</h3><p>"If this, then that": the trigger on one side, an action on the other.</p></div><div><h3>Web request</h3><p>The action sends an HTTP GET to a URL such as /on or /off.</p></div><div><h3>Request handling</h3><p>The ESP32 serves those routes and sets the output.</p></div></div>
+      <h3>System architecture</h3><div class="w7-flow">Voice command → IFTTT applet → HTTP request → ESP32 → relay → output</div>
+      <h3>Hardware and software</h3><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32 + relay and bulb or LED</td><td>Output being controlled</td></tr><tr><td>Arduino IDE</td><td>Programming</td></tr><tr><td>IFTTT account</td><td>Automation layer</td></tr><tr><td>Voice assistant</td><td>Source of the command</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>Relay IN (or LED)</td><td>Your chosen GPIO</td><td>Digital output</td></tr></table></div>
+      <h3>Setup</h3><ol><li>Upload the sketch below so the ESP32 serves <code>/on</code> and <code>/off</code>.</li><li>In IFTTT, create an applet whose trigger is your voice phrase for ON.</li><li>Set the action to a web request using GET to the ESP32's address followed by <code>/on</code>.</li><li>Create a second applet for OFF using <code>/off</code>.</li><li>Test each phrase and watch the Serial Monitor.</li></ol>
+      <p class="w7-note"><strong>Reachability:</strong> IFTTT sends the request from the internet, so a private address like 192.168.x.x won't work. The ESP32 must be reachable from outside your network (port forwarding or a tunnel), or the command must go through a cloud service. Say which route you used. Exposing a device this way has security risks, so do it only on a test setup.</p>
+      <h3>Implementation</h3><details open><summary>Full sketch</summary><pre>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+#define RELAY_PIN 26          // use the GPIO you wired
+
+WebServer server(80);
+
+void handleOn() {
+  digitalWrite(RELAY_PIN, HIGH);
+  server.send(200, "text/plain", "ON");
+}
+void handleOff() {
+  digitalWrite(RELAY_PIN, LOW);
+  server.send(200, "text/plain", "OFF");
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  Serial.println(WiFi.localIP());
+
+  server.on("/on", handleOn);
+  server.on("/off", handleOff);
+  server.begin();
+}
+
+void loop() { server.handleClient(); }</pre></details>
+      <h3>How the code works</h3><ol><li>The ESP32 joins Wi-Fi and starts a server, as in Task 1.</li><li><code>/on</code> and <code>/off</code> are the endpoints IFTTT calls.</li><li>Each handler sets the relay pin and replies with plain text so IFTTT sees a successful response.</li></ol>
+      <h3>Command flow</h3><div class="w7-flow">"Turn on" phrase → applet fires → GET /on → handleOn() → relay closes</div>
+      
+      <h3>Evidence</h3>
+      <div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      <h3>Video proof</h3>
+      <div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo3.mp4"&gt;&lt;/video&gt;</code></div>
+      <h3>Result</h3>
+      <div class="w7-todo">Write your own result and reflection: how the command travelled through several services, and what you did about reachability.</div>
+      <h3>Repository</h3>
+      <div class="w7-todo">Add your GitHub link for this task.</div>
+
+      <h3>Things to check if it doesn't work</h3><ul><li>The spoken phrase must match the applet trigger.</li><li>The URL in the web-request action must be reachable from the internet and use the right route.</li><li>Test ON and OFF as separate applets.</li></ul>
+    </article>
+    <nav class="w7-pager" aria-label="Task navigation"><a href="task-2.html">&larr; Task 2: ESP32 with Adafruit IO and MQTT</a><a href="task-4.html">Task 4: Firebase IoT dashboard &rarr;</a></nav>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="../contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="../js/script.js"></script>
+</body>
+</html>

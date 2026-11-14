@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 — IoT &amp; Connectivity — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="week7.css">
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="../index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="../index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="../skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="../experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="../projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="../protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="../education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="../contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <a href="../protosem.html" class="back-link reveal">&larr; Back to Protosem Tracker</a>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7</p>
+    <h1 class="page-title reveal">IoT &amp; Connectivity</h1>
+    <p class="w7-lead reveal">Five tasks that take an ESP32 from a local web page to cloud messaging, voice automation and a Firebase dashboard that monitors sensors and switches a mains bulb through a relay.</p>
+    <nav class="w7-chips reveal" aria-label="Tasks">
+      <a href="task-1.html">Web server</a>
+      <a href="task-2.html">MQTT</a>
+      <a href="task-3.html">IFTTT</a>
+      <a href="task-4.html">Dashboard</a>
+      <a href="task-5.html">ESP32 + Firebase</a>
+      <a href="#deliverables">Deliverables</a>
+    </nav>
+    <div class="w7-stack reveal" aria-label="Tools used">
+      <span>ESP32</span><span>Arduino IDE</span><span>HTTP</span><span>MQTT</span><span>Adafruit IO</span><span>IFTTT</span><span>Firebase</span><span>DHT11</span><span>LDR</span><span>Relay</span>
+    </div>
+  </section>
+
+  <section class="section container" style="padding-top:0">
+
+    <div class="w7-grid w7-links reveal">
+      <a href="task-1.html"><h3>Task 1: ESP32 web server</h3><p>Control the onboard LED from a browser.</p></a>
+      <a href="task-2.html"><h3>Task 2: ESP32 with Adafruit IO and MQTT</h3><p>Cloud control of a 230 V bulb through MQTT.</p></a>
+      <a href="task-3.html"><h3>Task 3: Voice control with IFTTT</h3><p>Trigger the ESP32 by voice through IFTTT.</p></a>
+      <a href="task-4.html"><h3>Task 4: Firebase IoT dashboard</h3><p>Login-protected dashboard on Firebase.</p></a>
+      <a href="task-5.html"><h3>Task 5: ESP32 with the Firebase dashboard</h3><p>Sensors and relay linked to the dashboard.</p></a>
+    </div>
+
+    <!-- KEY TAKEAWAYS -->
+    <article class="w7-task reveal" id="takeaways">
+      <h2>Key takeaways</h2>
+      <div class="w7-grid">
+        <div><h3>Local vs cloud control</h3><p>A local web server only works on the same network. MQTT and Firebase let the device be controlled from anywhere.</p></div>
+        <div><h3>Publish and subscribe</h3><p>MQTT devices talk through a broker and topics rather than directly to each other.</p></div>
+        <div><h3>Isolate the mains side</h3><p>The ESP32 only drives the relay's low-voltage input. The relay does the 230 V switching.</p></div>
+        <div><h3>Manual and automatic modes</h3><p>Reading the mode first stops dashboard commands and the sensor from fighting over the relay.</p></div>
+      </div>
+      <div class="w7-todo">Rewrite these in your own words, and add what you personally found difficult or learned from each task.</div>
+    </article>
+
+    <!-- DELIVERABLES -->
+    <article class="w7-task reveal" id="deliverables">
+      <h2>Deliverables</h2>
+      <div class="w7-grid">
+        <div><h3>Task 1 — Web server</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 2 — MQTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 3 — IFTTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 4 — Dashboard</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 5 — ESP32 + Firebase</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="../contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="../js/script.js"></script>
+</body>
+</html>

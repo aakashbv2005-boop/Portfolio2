@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 · Task 1 — Aakash Babu Naventran</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="week7.css">
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<div class="page-transition" id="pageTransition">
+  <div class="pt-panel" id="ptPanel"><span class="pt-label" id="ptLabel"></span></div>
+</div>
+
+<header class="nav">
+  <a href="../index.html" class="nav-logo">ABN<span class="dot">.</span></a>
+  <nav class="nav-links" id="navLinks">
+    <a href="../index.html" data-page="index.html"><span class="idx">00</span>Home</a>
+    <a href="../skills.html" data-page="skills.html"><span class="idx">01</span>Skills</a>
+    <a href="../experience.html" data-page="experience.html"><span class="idx">02</span>Experience</a>
+    <a href="../projects.html" data-page="projects.html"><span class="idx">03</span>Projects</a>
+    <a href="../protosem.html" data-page="protosem.html"><span class="idx">04</span>Protosem</a>
+    <a href="../education.html" data-page="education.html"><span class="idx">05</span>Education</a>
+    <a href="../contact.html" data-page="contact.html"><span class="idx">06</span>Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="page-head container">
+    <a href="index.html" class="back-link reveal">&larr; Back to Week 7</a>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7 · TASK 1 OF 5</p>
+    <h1 class="page-title reveal">ESP32 web server</h1>
+  </section>
+  <section class="section container" style="padding-top:0">
+    <article class="w7-task reveal" id="task-1">
+
+      <p><strong>Objective:</strong> switch the ESP32's onboard LED on and off from a browser over a local Wi-Fi network.</p>
+      <h3>Context</h3><p>This is the starting point of the week. Before using the cloud, the ESP32 itself is made to act as a small web server that answers requests from a browser.</p>
+      <h3>Core concepts</h3><div class="w7-grid"><div><h3>Web server</h3><p>The ESP32 joins Wi-Fi, gets a local IP address and listens for HTTP requests on port 80.</p></div><div><h3>HTTP routes</h3><p>Each URL (/, /on, /off) is tied to a function that runs when the browser requests it.</p></div><div><h3>Built-in LED</h3><p>The board's onboard LED needs no extra wiring, so the task isolates the networking part.</p></div></div>
+      <h3>System architecture</h3><div class="w7-flow">Browser → HTTP request → ESP32 web server → GPIO → LED</div>
+      <h3>Hardware and software</h3><div class="w7-wrap"><table class="w7-table"><tr><th>Item</th><th>Purpose</th></tr><tr><td>ESP32 board</td><td>Wi-Fi microcontroller and web server</td></tr><tr><td>USB cable</td><td>Power and programming</td></tr><tr><td>Arduino IDE + ESP32 board package</td><td>Writing and uploading code</td></tr><tr><td>Browser on the same network</td><td>Sends the requests</td></tr></table></div>
+      <div class="w7-wrap"><table class="w7-table"><tr><th>Component</th><th>GPIO</th><th>Type</th></tr><tr><td>Built-in LED</td><td>LED_BUILTIN (GPIO 2 on most DevKit boards)</td><td>Digital output</td></tr></table></div>
+      <p>No external wiring is needed.</p>
+      <h3>Setup</h3><ol><li>Install the Arduino IDE.</li><li>In File → Preferences, add the Espressif ESP32 board package URL to Additional Boards Manager URLs.</li><li>In Boards Manager, install <em>esp32 by Espressif Systems</em>.</li><li>Select your ESP32 board and its COM port under Tools.</li></ol>
+      <h3>Implementation</h3><details open><summary>Full sketch</summary><pre>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+WebServer server(80);
+
+const char* page =
+  "&lt;h1&gt;ESP32 LED Control&lt;/h1&gt;"
+  "&lt;a href='/on'&gt;LED ON&lt;/a&gt; &lt;a href='/off'&gt;LED OFF&lt;/a&gt;";
+
+void handleRoot() { server.send(200, "text/html", page); }
+void handleOn()   { digitalWrite(LED_BUILTIN, HIGH); server.send(200, "text/html", page); }
+void handleOff()  { digitalWrite(LED_BUILTIN, LOW);  server.send(200, "text/html", page); }
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.println();
+  Serial.print("ESP32 IP: ");
+  Serial.println(WiFi.localIP());
+
+  server.on("/", handleRoot);
+  server.on("/on", handleOn);
+  server.on("/off", handleOff);
+  server.begin();
+}
+
+void loop() { server.handleClient(); }</pre></details>
+      <h3>How the code works</h3><ol><li><code>WiFi.begin()</code> connects to the network and <code>WiFi.localIP()</code> prints the address to open.</li><li><code>server.on()</code> links each URL to a handler function.</li><li>Each handler sets the LED pin with <code>digitalWrite()</code> and returns the page.</li><li><code>server.handleClient()</code> in <code>loop()</code> checks for new browser requests.</li></ol>
+      <h3>Command flow</h3><div class="w7-flow">Click LED ON → GET /on → handleOn() → pin HIGH → LED on</div>
+      <h3>Testing</h3><ol><li>Upload the sketch and open the Serial Monitor at 115200 baud.</li><li>Note the IP address once Wi-Fi connects.</li><li>Open that IP in a browser on the same network.</li><li>Press LED ON and LED OFF and watch the board.</li></ol>
+      
+      <h3>Evidence</h3>
+      <div class="w7-todo">Add your own screenshots and photos for this task here.</div>
+      <h3>Video proof</h3>
+      <div class="w7-todo">Add your demo video: <code>&lt;video controls src="video/demo1.mp4"&gt;&lt;/video&gt;</code></div>
+      <h3>Result</h3>
+      <div class="w7-todo">Write your own result and reflection: what the ESP32 as a web server taught you about browser, network and hardware working together.</div>
+      <h3>Repository</h3>
+      <div class="w7-todo">Add your GitHub link for this task.</div>
+
+      <h3>Things to check if it doesn't work</h3><ul><li>The browser and ESP32 must be on the same network, and the network must be 2.4 GHz.</li><li>The onboard LED pin differs between board variants, which is why <code>LED_BUILTIN</code> is used.</li></ul>
+    </article>
+    <nav class="w7-pager" aria-label="Task navigation"><span></span><a href="task-2.html">Task 2: ESP32 with Adafruit IO and MQTT &rarr;</a></nav>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Aakash Babu Naventran</span>
+    <span>Coimbatore, India · <a href="../contact.html">Get in touch</a></span>
+  </div>
+</footer>
+
+<script src="../js/script.js"></script>
+</body>
+</html>
