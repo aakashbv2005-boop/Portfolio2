@@ -3,10 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Week 7 — Aakash Babu Naventran</title>
+<title>Week 7 — IoT &amp; Connectivity — Aakash Babu Naventran</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* Week 7 additions. Move into css/style.css if you prefer. */
+.w7-lead{max-width:62ch;opacity:.85;margin-top:1rem}
+.w7-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.75rem 0 0}
+.w7-chips a{padding:.45rem .9rem;border:1px solid rgba(255,255,255,.18);border-radius:999px;font-size:.85rem;text-decoration:none;color:inherit}
+.w7-chips a:hover,.w7-chips a:focus-visible{border-color:currentColor}
+.w7-task{border-top:1px solid rgba(255,255,255,.12);padding:3rem 0}
+.w7-task h2{margin:.25rem 0 .75rem}
+.w7-task p{max-width:68ch}
+.w7-tag{font-family:'IBM Plex Mono',monospace;font-size:.8rem;opacity:.65}
+.w7-flow{font-family:'IBM Plex Mono',monospace;font-size:.85rem;padding:1rem 1.1rem;margin:1.25rem 0;border:1px solid rgba(255,255,255,.14);border-radius:6px;overflow-x:auto;white-space:nowrap}
+.w7-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.9rem}
+.w7-table th,.w7-table td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.w7-table th{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.78rem;opacity:.7}
+.w7-wrap{overflow-x:auto}
+.w7-task details{margin:1.25rem 0;border:1px solid rgba(255,255,255,.14);border-radius:6px}
+.w7-task summary{cursor:pointer;padding:.75rem 1rem;font-weight:500}
+.w7-task pre{margin:0;padding:1rem;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:.8rem;line-height:1.55;border-top:1px solid rgba(255,255,255,.12)}
+.w7-note{padding:.9rem 1.1rem;border-left:3px solid currentColor;background:rgba(255,255,255,.04);margin:1.25rem 0;max-width:68ch;font-size:.92rem}
+.w7-todo{padding:1rem 1.1rem;margin:1.25rem 0;border:1px dashed rgba(255,255,255,.3);border-radius:6px;font-size:.9rem;opacity:.85}
+.w7-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin-top:1.25rem}
+.w7-grid div{padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.14);border-radius:6px}
+.w7-grid h3{margin:0 0 .4rem;font-size:1rem}
+.w7-grid p{margin:0;font-size:.9rem;opacity:.85}
+.w7-stack{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.25rem}
+.w7-stack span{padding:.25rem .65rem;border:1px solid rgba(255,255,255,.18);border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:.78rem}
+</style>
 </head>
 <body>
 
@@ -36,18 +63,209 @@
 <main>
   <section class="page-head container">
     <a href="protosem.html" class="back-link reveal">&larr; Back to Protosem Tracker</a>
-    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7 · UPCOMING</p>
-    <h1 class="page-title reveal">Week 7</h1>
+    <p class="hero-eyebrow"><span class="pulse"></span> PROTOSEM · WEEK 7</p>
+    <h1 class="page-title reveal">IoT &amp; Connectivity</h1>
+    <p class="w7-lead reveal">Five tasks that take an ESP32 from a local web page to cloud messaging, voice automation and a Firebase dashboard that monitors sensors and switches a mains bulb through a relay.</p>
+    <nav class="w7-chips reveal" aria-label="Tasks">
+      <a href="#task-1">Web server</a>
+      <a href="#task-2">MQTT</a>
+      <a href="#task-3">IFTTT</a>
+      <a href="#task-4">Dashboard</a>
+      <a href="#task-5">ESP32 + Firebase</a>
+      <a href="#deliverables">Deliverables</a>
+    </nav>
+    <div class="w7-stack reveal" aria-label="Tools used">
+      <span>ESP32</span><span>Arduino IDE</span><span>HTTP</span><span>MQTT</span><span>Adafruit IO</span><span>IFTTT</span><span>Firebase</span><span>DHT11</span><span>LDR</span><span>Relay</span>
+    </div>
   </section>
 
   <section class="section container" style="padding-top:0">
-    <div class="upcoming-state reveal">
-      <span class="upcoming-icon">&#9203;</span>
-      <h2>This week hasn't started yet</h2>
-      <p>Once Week 7 is complete, edit this file (week-7.html) and swap this block
-         for the same "What I worked on / Key takeaways / Deliverables" layout used
-         on the Week 0 and Week 1 pages.</p>
-    </div>
+
+    <!-- TASK 1 -->
+    <article class="w7-task reveal" id="task-1">
+      <p class="w7-tag">Task 1 of 5</p>
+      <h2>ESP32 web server</h2>
+      <p><strong>Objective:</strong> switch the ESP32's onboard LED on and off from a browser on the same Wi-Fi network. The ESP32 connects to Wi-Fi, serves a page, and maps the <code>/on</code> and <code>/off</code> URLs to GPIO changes.</p>
+      <div class="w7-flow">Browser → HTTP GET /on → ESP32 web server → GPIO → LED</div>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Component</th><th>GPIO</th><th>Type</th></tr>
+        <tr><td>Built-in LED</td><td>LED_BUILTIN (GPIO 2 on most DevKit boards)</td><td>Digital output</td></tr>
+      </table></div>
+      <details>
+        <summary>Core code</summary>
+<pre>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+WebServer server(80);
+
+const char* page =
+  "&lt;h1&gt;ESP32 LED&lt;/h1&gt;&lt;a href='/on'&gt;ON&lt;/a&gt; &lt;a href='/off'&gt;OFF&lt;/a&gt;";
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  Serial.println(WiFi.localIP());   // open this IP in a browser
+
+  server.on("/",    []{ server.send(200, "text/html", page); });
+  server.on("/on",  []{ digitalWrite(LED_BUILTIN, HIGH); server.send(200, "text/html", page); });
+  server.on("/off", []{ digitalWrite(LED_BUILTIN, LOW);  server.send(200, "text/html", page); });
+  server.begin();
+}
+
+void loop() { server.handleClient(); }</pre>
+      </details>
+      <div class="w7-todo">Add your screenshots (Serial Monitor with the IP address, browser page, LED on and off) and your demo video here.</div>
+    </article>
+
+    <!-- TASK 2 -->
+    <article class="w7-task reveal" id="task-2">
+      <p class="w7-tag">Task 2 of 5</p>
+      <h2>Adafruit IO and MQTT</h2>
+      <p><strong>Objective:</strong> control a 230 V bulb from a cloud dashboard. Adafruit IO acts as the MQTT broker, the ESP32 subscribes to a <code>bulb</code> feed, and a relay does the switching so the mains side never touches the ESP32.</p>
+      <div class="w7-flow">Adafruit IO feed → MQTT → ESP32 → relay → 230 V bulb</div>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Component</th><th>GPIO</th><th>Type</th></tr>
+        <tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td></tr>
+        <tr><td>230 V bulb</td><td>Relay output</td><td>Switched load</td></tr>
+      </table></div>
+      <p class="w7-note"><strong>Safety:</strong> keep the mains side insulated and fully separate from the ESP32. Never connect 230 V to a GPIO pin.</p>
+      <details>
+        <summary>Core code</summary>
+<pre>#include "AdafruitIO_WiFi.h"
+
+#define WIFI_SSID     "YOUR_WIFI_NAME"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+#define IO_USERNAME   "YOUR_ADAFRUIT_USERNAME"
+#define IO_KEY        "YOUR_ADAFRUIT_IO_KEY"
+#define RELAY_PIN 26
+
+AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASSWORD);
+AdafruitIO_Feed *bulbFeed = io.feed("bulb");
+
+void handleBulb(AdafruitIO_Data *data) {
+  String v = data->toString();
+  if (v == "ON" || v == "1")  digitalWrite(RELAY_PIN, HIGH);
+  if (v == "OFF" || v == "0") digitalWrite(RELAY_PIN, LOW);
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
+  io.connect();
+  while (io.status() &lt; AIO_CONNECTED) delay(500);
+  bulbFeed-&gt;onMessage(handleBulb);
+  bulbFeed-&gt;get();
+}
+
+void loop() { io.run(); }</pre>
+      </details>
+      <div class="w7-todo">Add your Adafruit IO feed screenshot, wiring photo, relay response and demo video. Confirm the relay GPIO matches your own circuit and whether your relay is active-HIGH or active-LOW.</div>
+    </article>
+
+    <!-- TASK 3 -->
+    <article class="w7-task reveal" id="task-3">
+      <p class="w7-tag">Task 3 of 5</p>
+      <h2>Voice control with IFTTT</h2>
+      <p><strong>Objective:</strong> trigger the ESP32 by voice. A voice phrase fires an IFTTT applet, which sends an HTTP web request to the ESP32's <code>/on</code> or <code>/off</code> route. Two applets give two commands.</p>
+      <div class="w7-flow">Voice command → IFTTT applet → HTTP request → ESP32 → output</div>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Voice phrase</th><th>Request</th><th>Result</th></tr>
+        <tr><td>Your ON phrase</td><td>GET /on</td><td>Output on</td></tr>
+        <tr><td>Your OFF phrase</td><td>GET /off</td><td>Output off</td></tr>
+      </table></div>
+      <p class="w7-note"><strong>Reachability:</strong> IFTTT sends the request from the internet, so a private address such as 192.168.x.x will not work on its own. The ESP32 needs to be reachable from outside your network (port forwarding or a tunnel), or the command has to go through a cloud service. Note which route you used.</p>
+      <details>
+        <summary>Core code (the routes)</summary>
+<pre>server.on("/on", []{
+  digitalWrite(RELAY_PIN, HIGH);
+  server.send(200, "text/plain", "ON");
+});
+server.on("/off", []{
+  digitalWrite(RELAY_PIN, LOW);
+  server.send(200, "text/plain", "OFF");
+});</pre>
+      </details>
+      <div class="w7-todo">Add your IFTTT applet screenshots (trigger, web request action), the test result and your demo video.</div>
+    </article>
+
+    <!-- TASK 4 -->
+    <article class="w7-task reveal" id="task-4">
+      <p class="w7-tag">Task 4 of 5</p>
+      <h2>Firebase IoT dashboard</h2>
+      <p><strong>Objective:</strong> build a login-protected web dashboard in HTML, CSS and JavaScript that shows temperature, humidity and light level, and has a MANUAL or AUTO switch for the bulb. This task is software only. The hardware connects in Task 5.</p>
+      <div class="w7-flow">Sensor data → Firebase Realtime Database → dashboard &nbsp;|&nbsp; Dashboard control → Firebase → device</div>
+      <p>Firebase Authentication restricts access. The database keeps readings and commands on separate paths so the dashboard and the ESP32 can share them:</p>
+      <details open>
+        <summary>Database structure</summary>
+<pre>{
+  "sensors": { "temperature": 0, "humidity": 0, "ldr": 0 },
+  "control": { "bulb": "OFF", "mode": "MANUAL" }
+}</pre>
+      </details>
+      <div class="w7-todo">Add your dashboard screenshots (login, sensor cards, bulb controls), Firebase console view and demo video. Keep Firebase keys and private credentials out of the public repository.</div>
+    </article>
+
+    <!-- TASK 5 -->
+    <article class="w7-task reveal" id="task-5">
+      <p class="w7-tag">Task 5 of 5</p>
+      <h2>Connecting the dashboard to the ESP32</h2>
+      <p><strong>Objective:</strong> join the hardware and the dashboard. The ESP32 uploads DHT11 and LDR readings to Firebase and reads the mode and bulb command back. In MANUAL mode the dashboard decides. In AUTO mode the LDR reading decides.</p>
+      <div class="w7-flow">DHT11 + LDR → ESP32 → Firebase → dashboard &nbsp;|&nbsp; dashboard → Firebase → ESP32 → relay → bulb</div>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Component</th><th>GPIO</th><th>Type</th><th>Function</th></tr>
+        <tr><td>DHT11 data</td><td>GPIO 4</td><td>Digital input</td><td>Temperature and humidity</td></tr>
+        <tr><td>LDR AO</td><td>GPIO 34</td><td>Analog input</td><td>Light intensity</td></tr>
+        <tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td><td>Bulb control</td></tr>
+      </table></div>
+      <p class="w7-note"><strong>Check against your circuit:</strong> the pins above and the AUTO threshold below are example values. Replace them with the ones you actually wired and calibrated, and test whether your LDR reads higher in light or in dark before you set the comparison.</p>
+      <details>
+        <summary>Control logic</summary>
+<pre>readDHT11();
+readLDR();
+uploadSensorReadingsToFirebase();
+
+mode = readFirebaseMode();
+
+if (mode == "AUTO") {
+  if (ldr &gt; THRESHOLD) turnBulbON();   // THRESHOLD from your calibration
+  else                 turnBulbOFF();
+} else {                               // MANUAL
+  if (readFirebaseBulbCommand() == "ON") turnBulbON();
+  else                                   turnBulbOFF();
+}</pre>
+      </details>
+      <div class="w7-todo">Add your full tested sketch, Firebase sensor screenshots, MANUAL and AUTO mode tests and demo video.</div>
+    </article>
+
+    <!-- KEY TAKEAWAYS -->
+    <article class="w7-task reveal" id="takeaways">
+      <h2>Key takeaways</h2>
+      <div class="w7-grid">
+        <div><h3>Local vs cloud control</h3><p>A local web server only works on the same network. MQTT and Firebase let the device be controlled from anywhere.</p></div>
+        <div><h3>Publish and subscribe</h3><p>MQTT devices talk through a broker and topics rather than directly to each other.</p></div>
+        <div><h3>Isolate the mains side</h3><p>The ESP32 only drives the relay's low-voltage input. The relay does the 230 V switching.</p></div>
+        <div><h3>Manual and automatic modes</h3><p>Reading the mode first stops dashboard commands and the sensor from fighting over the relay.</p></div>
+      </div>
+      <div class="w7-todo">Rewrite these in your own words, and add what you personally found difficult or learned from each task.</div>
+    </article>
+
+    <!-- DELIVERABLES -->
+    <article class="w7-task reveal" id="deliverables">
+      <h2>Deliverables</h2>
+      <div class="w7-grid">
+        <div><h3>Task 1 — Web server</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 2 — MQTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 3 — IFTTT</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 4 — Dashboard</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+        <div><h3>Task 5 — ESP32 + Firebase</h3><p>Repository: <em>add link</em><br>Video: <em>add link</em></p></div>
+      </div>
+    </article>
+
   </section>
 </main>
 
