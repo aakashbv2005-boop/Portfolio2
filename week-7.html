@@ -124,47 +124,137 @@ void loop() { server.handleClient(); }</pre>
     <!-- TASK 2 -->
     <article class="w7-task reveal" id="task-2">
       <p class="w7-tag">Task 2 of 5</p>
-      <h2>Adafruit IO and MQTT</h2>
-      <p><strong>Objective:</strong> control a 230 V bulb from a cloud dashboard. Adafruit IO acts as the MQTT broker, the ESP32 subscribes to a <code>bulb</code> feed, and a relay does the switching so the mains side never touches the ESP32.</p>
-      <div class="w7-flow">Adafruit IO feed → MQTT → ESP32 → relay → 230 V bulb</div>
+      <h2>ESP32 with Adafruit IO and MQTT</h2>
+      <p><strong>Objective:</strong> connect the ESP32 to Adafruit IO and use MQTT to switch a 230 V bulb through a relay, from a cloud dashboard instead of a local page.</p>
+
+      <h3>Context</h3>
+      <p>Task 1 only worked on the same Wi-Fi network as the ESP32. This task moves control to the cloud. Adafruit IO is the platform, MQTT is the protocol, and the ESP32 acts on the messages it receives by switching a relay.</p>
+
+      <h3>Core concepts</h3>
+      <div class="w7-grid">
+        <div><h3>Adafruit IO</h3><p>A cloud service that stores values in named feeds. Devices and dashboards read and write the same feed.</p></div>
+        <div><h3>MQTT</h3><p>A lightweight messaging protocol for IoT. Devices send messages through a broker instead of connecting to each other.</p></div>
+        <div><h3>Publish and subscribe</h3><p>A device publishes to a topic, and any device subscribed to that topic receives it. Here the ESP32 subscribes to the bulb feed.</p></div>
+        <div><h3>Relay switching</h3><p>The ESP32 only drives the relay's low-voltage input. The relay's contacts switch the mains bulb.</p></div>
+      </div>
+
+      <h3>System architecture</h3>
+      <div class="w7-flow">Adafruit IO dashboard → MQTT broker → ESP32 → relay → 230 V bulb</div>
+
+      <h3>Hardware and software</h3>
+      <div class="w7-wrap"><table class="w7-table">
+        <tr><th>Item</th><th>Purpose</th></tr>
+        <tr><td>ESP32</td><td>Connects to Wi-Fi and Adafruit IO, runs the control code</td></tr>
+        <tr><td>Relay module</td><td>Isolates and switches the mains load</td></tr>
+        <tr><td>230 V bulb and holder</td><td>The load being controlled</td></tr>
+        <tr><td>Arduino IDE + Adafruit IO Arduino library</td><td>Programming and MQTT handling</td></tr>
+        <tr><td>Adafruit IO account and feed</td><td>Cloud side of the connection</td></tr>
+      </table></div>
       <div class="w7-wrap"><table class="w7-table">
         <tr><th>Component</th><th>GPIO</th><th>Type</th></tr>
         <tr><td>Relay IN</td><td>GPIO 26</td><td>Digital output</td></tr>
         <tr><td>230 V bulb</td><td>Relay output</td><td>Switched load</td></tr>
       </table></div>
-      <p class="w7-note"><strong>Safety:</strong> keep the mains side insulated and fully separate from the ESP32. Never connect 230 V to a GPIO pin.</p>
-      <details>
-        <summary>Core code</summary>
-<pre>#include "AdafruitIO_WiFi.h"
+      <p class="w7-note"><strong>Safety:</strong> the bulb connects only through the relay contacts. Never connect 230 V to an ESP32 pin, keep all mains wiring insulated and enclosed, and use a relay rated for the load.</p>
 
+      <h3>Setup</h3>
+      <ol>
+        <li>Create an Adafruit IO account and a feed named <code>bulb</code>.</li>
+        <li>Copy your Adafruit IO username and key into the sketch. Keep the key out of any public repository.</li>
+        <li>Wire the relay's IN pin to the ESP32 GPIO, and power the relay module as its datasheet requires.</li>
+        <li>Connect the bulb through the relay's switched terminals.</li>
+        <li>Upload the sketch and check the Serial Monitor for the Adafruit IO connection.</li>
+      </ol>
+
+      <h3>Implementation</h3>
+      <details open>
+        <summary>Full sketch</summary>
+<pre>#include &lt;WiFi.h&gt;
+#include "AdafruitIO_WiFi.h"
+
+// Wi-Fi
 #define WIFI_SSID     "YOUR_WIFI_NAME"
 #define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
-#define IO_USERNAME   "YOUR_ADAFRUIT_USERNAME"
-#define IO_KEY        "YOUR_ADAFRUIT_IO_KEY"
+
+// Adafruit IO
+#define IO_USERNAME "YOUR_ADAFRUIT_USERNAME"
+#define IO_KEY      "YOUR_ADAFRUIT_IO_KEY"
+
+// Relay (use the GPIO you actually wired)
 #define RELAY_PIN 26
 
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASSWORD);
 AdafruitIO_Feed *bulbFeed = io.feed("bulb");
 
+// Runs every time a new value arrives on the feed
 void handleBulb(AdafruitIO_Data *data) {
-  String v = data->toString();
-  if (v == "ON" || v == "1")  digitalWrite(RELAY_PIN, HIGH);
-  if (v == "OFF" || v == "0") digitalWrite(RELAY_PIN, LOW);
+  String value = data-&gt;toString();
+  Serial.print("Received command: ");
+  Serial.println(value);
+
+  if (value == "ON" || value == "1" || value == "on") {
+    digitalWrite(RELAY_PIN, HIGH);
+    Serial.println("Relay ON");
+  } else if (value == "OFF" || value == "0" || value == "off") {
+    digitalWrite(RELAY_PIN, LOW);
+    Serial.println("Relay OFF");
+  }
 }
 
 void setup() {
   Serial.begin(115200);
   pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, LOW);
+  digitalWrite(RELAY_PIN, LOW);          // start with bulb off
+
+  Serial.println("Connecting to Adafruit IO...");
   io.connect();
-  while (io.status() &lt; AIO_CONNECTED) delay(500);
-  bulbFeed-&gt;onMessage(handleBulb);
-  bulbFeed-&gt;get();
+  while (io.status() &lt; AIO_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println("\nConnected to Adafruit IO");
+
+  bulbFeed-&gt;onMessage(handleBulb);       // subscribe to the feed
+  bulbFeed-&gt;get();                       // fetch the latest value
 }
 
-void loop() { io.run(); }</pre>
+void loop() {
+  io.run();                              // keep MQTT alive, process messages
+}</pre>
       </details>
-      <div class="w7-todo">Add your Adafruit IO feed screenshot, wiring photo, relay response and demo video. Confirm the relay GPIO matches your own circuit and whether your relay is active-HIGH or active-LOW.</div>
+
+      <h3>How the code works</h3>
+      <ol>
+        <li><strong>Connect.</strong> <code>io.connect()</code> joins Wi-Fi and authenticates with your username and key.</li>
+        <li><strong>Subscribe.</strong> <code>onMessage(handleBulb)</code> registers the function to call when the <code>bulb</code> feed changes.</li>
+        <li><strong>Decide.</strong> <code>handleBulb</code> reads the text value and treats ON or 1 as on, OFF or 0 as off.</li>
+        <li><strong>Switch.</strong> The relay pin goes HIGH or LOW, which closes or opens the bulb circuit.</li>
+        <li><strong>Stay connected.</strong> <code>io.run()</code> in <code>loop()</code> must run constantly, or messages are missed.</li>
+      </ol>
+
+      <h3>Command flow</h3>
+      <div class="w7-flow">Set ON on dashboard → feed updates → MQTT message → ESP32 handleBulb() → relay closes → bulb on</div>
+      <p>OFF follows the same path and opens the relay.</p>
+
+      <h3>Evidence</h3>
+      <div class="w7-todo">Add your own screenshots here: the Adafruit IO feed, the ESP32 configuration, MQTT messages in the Serial Monitor, the relay clicking, and the bulb on and off.</div>
+
+      <h3>Video proof</h3>
+      <div class="w7-todo">Add your demo video: toggling the Adafruit IO dashboard and the bulb responding. <code>&lt;video controls src="week7/video/demo2.mp4"&gt;&lt;/video&gt;</code></div>
+
+      <h3>Things to check if it doesn't work</h3>
+      <ul>
+        <li>The Wi-Fi network must be 2.4 GHz, and the ESP32 needs a stable connection before Adafruit IO will connect.</li>
+        <li>The username, key and feed name in the sketch must match your Adafruit IO account exactly.</li>
+        <li>Change the feed value and watch the Serial Monitor to confirm the message arrives.</li>
+        <li>Confirm whether your relay module is active-HIGH or active-LOW. If the bulb is inverted, swap HIGH and LOW.</li>
+      </ul>
+
+      <h3>Result</h3>
+      <div class="w7-todo">Write your own result and reflection here: what worked, what went wrong, and what you learned about cloud control compared with Task 1.</div>
+
+      <h3>Repository</h3>
+      <div class="w7-todo">Add your GitHub link for this task.</div>
     </article>
 
     <!-- TASK 3 -->
